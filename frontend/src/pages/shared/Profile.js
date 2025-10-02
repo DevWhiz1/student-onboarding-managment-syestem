@@ -1,6 +1,6 @@
 import React from 'react';
 import { User, Mail, Calendar, Award, BookOpen, Video } from 'lucide-react';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../../contexts/AuthContext';
 
 const Profile = () => {
   const { user } = useAuth();

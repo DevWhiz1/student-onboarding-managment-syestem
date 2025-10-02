@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
-import { useAuth } from '../contexts/AuthContext';
-import api from '../config/api';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
+import api from '../../config/api';
+import { Card, Button, Input } from '../../components/ui';
 import { 
   Video, 
   Upload, 
@@ -10,15 +12,20 @@ import {
   AlertCircle,
   CheckCircle,
   Clock,
-  Eye
+  Eye,
+  ArrowLeft,
+  HelpCircle,
+  Play
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useForm } from 'react-hook-form';
 
 const VideoSubmission = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [previewUrl, setPreviewUrl] = useState('');
+  const [recentSubmissions, setRecentSubmissions] = useState([]);
 
   const {
     register,
@@ -29,6 +36,19 @@ const VideoSubmission = () => {
   } = useForm();
 
   const videoUrl = watch('video_url');
+
+  useEffect(() => {
+    fetchRecentSubmissions();
+  }, []);
+
+  const fetchRecentSubmissions = async () => {
+    try {
+      const response = await api.get('/api/student/videos/recent?limit=3');
+      setRecentSubmissions(response.data);
+    } catch (error) {
+      console.error('Error fetching recent submissions:', error);
+    }
+  };
 
   const onSubmit = async (data) => {
     setIsSubmitting(true);
@@ -43,6 +63,9 @@ const VideoSubmission = () => {
       toast.success('Video submitted successfully! Analysis will begin shortly.');
       reset();
       setPreviewUrl('');
+      fetchRecentSubmissions();
+      // Optionally navigate to the videos page
+      // navigate('/student/videos');
     } catch (error) {
       console.error('Error submitting video:', error);
       const message = error.response?.data?.detail || 'Failed to submit video';
@@ -57,7 +80,7 @@ const VideoSubmission = () => {
   };
 
   const getVideoId = (url) => {
-    const youtubeRegex = /(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/;
+    const youtubeRegex = /(?:youtube\.com\/(?:[^/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?/\s]{11})/;
     const vimeoRegex = /vimeo\.com\/(\d+)/;
     
     const youtubeMatch = url.match(youtubeRegex);
@@ -110,23 +133,40 @@ const VideoSubmission = () => {
   };
 
   return (
-    <div className="max-w-2xl mx-auto p-6">
-      <div className="bg-white rounded-lg shadow-sm border">
-        {/* Header */}
-        <div className="p-6 border-b border-gray-200">
+    <div className="max-w-4xl mx-auto space-y-6">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <Button
+          variant="ghost"
+          onClick={() => navigate('/student/videos')}
+          icon={ArrowLeft}
+        >
+          Back to My Videos
+        </Button>
+        <Button
+          variant="outline"
+          onClick={() => navigate('/student/videos/guidelines')}
+          icon={HelpCircle}
+        >
+          Guidelines
+        </Button>
+      </div>
+
+      <Card className="p-8">
+        <Card.Header>
           <div className="flex items-center mb-4">
-            <div className="p-2 bg-primary-100 rounded-lg mr-3">
-              <Video className="h-6 w-6 text-primary-600" />
+            <div className="p-3 bg-primary-100 rounded-lg mr-4">
+              <Video className="h-8 w-8 text-primary-600" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Submit Video Assignment</h1>
-              <p className="text-gray-600">Upload your video assignment for AI analysis and feedback</p>
+              <h1 className="text-3xl font-bold text-gray-900">Submit Video Assignment</h1>
+              <p className="text-gray-600 mt-2">Upload your video assignment for AI analysis and personalized feedback</p>
             </div>
           </div>
-        </div>
+        </Card.Header>
 
-        {/* Form */}
-        <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-6">
+        <Card.Content>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           {/* Video URL */}
           <div>
             <label htmlFor="video_url" className="block text-sm font-medium text-gray-700 mb-2">
@@ -225,46 +265,127 @@ const VideoSubmission = () => {
           </div>
 
           {/* Submit Button */}
-          <div className="flex items-center justify-between pt-4">
+          <div className="flex items-center justify-between pt-6 border-t border-gray-200">
             <div className="text-sm text-gray-500">
-              Submitting as: <span className="font-medium">{user?.name}</span>
+              Submitting as: <span className="font-medium text-gray-900">{user?.name}</span>
             </div>
             
-            <button
+            <Button
               type="submit"
               disabled={isSubmitting}
-              className="flex items-center px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              loading={isSubmitting}
+              icon={Send}
+              size="lg"
             >
-              {isSubmitting ? (
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-              ) : (
-                <Send className="h-4 w-4 mr-2" />
-              )}
               {isSubmitting ? 'Submitting...' : 'Submit Video'}
-            </button>
+            </Button>
           </div>
         </form>
-      </div>
+        </Card.Content>
+      </Card>
 
       {/* Recent Submissions */}
-      <div className="mt-8 bg-white rounded-lg shadow-sm border">
-        <div className="p-6 border-b border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-900 flex items-center">
+      <Card>
+        <Card.Header>
+          <Card.Title className="flex items-center">
             <Clock className="h-5 w-5 mr-2" />
             Recent Submissions
-          </h2>
-        </div>
-        <div className="p-6">
-          <div className="text-center py-8">
-            <Eye className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-500">No recent submissions</p>
-            <p className="text-sm text-gray-400 mt-1">Your video submissions will appear here</p>
+          </Card.Title>
+        </Card.Header>
+        <Card.Content>
+          {recentSubmissions.length === 0 ? (
+            <div className="text-center py-8">
+              <Eye className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <p className="text-gray-500">No recent submissions</p>
+              <p className="text-sm text-gray-400 mt-1">Your video submissions will appear here</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {recentSubmissions.map((video) => (
+                <div key={video.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:shadow-md transition-shadow">
+                  <div className="flex items-center flex-1">
+                    <div className="p-2 bg-blue-100 rounded-lg mr-3">
+                      <Video className="h-5 w-5 text-blue-600" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-medium text-gray-900">{video.title}</h3>
+                      <p className="text-sm text-gray-600">{video.description}</p>
+                      <div className="flex items-center mt-1 text-xs text-gray-500">
+                        <span>{new Date(video.submitted_at).toLocaleDateString()}</span>
+                        <span className="mx-2">•</span>
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          video.status === 'analyzed' ? 'bg-green-100 text-green-800' :
+                          video.status === 'analyzing' ? 'bg-yellow-100 text-yellow-800' :
+                          'bg-gray-100 text-gray-800'
+                        }`}>
+                          {video.status}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => window.open(video.video_url, '_blank')}
+                      icon={Play}
+                    >
+                      Watch
+                    </Button>
+                    {video.status === 'analyzed' && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => navigate(`/student/videos/${video.id}/analysis`)}
+                        icon={Eye}
+                      >
+                        Analysis
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </Card.Content>
+      </Card>
+
+      {/* Tips and Guidelines */}
+      <Card>
+        <Card.Header>
+          <Card.Title className="flex items-center">
+            <HelpCircle className="h-5 w-5 mr-2" />
+            Tips for Better Analysis
+          </Card.Title>
+        </Card.Header>
+        <Card.Content>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <h4 className="font-medium text-gray-900 mb-2">Video Quality</h4>
+              <ul className="text-sm text-gray-600 space-y-1">
+                <li>• Use good lighting and clear audio</li>
+                <li>• Ensure stable camera positioning</li>
+                <li>• Speak clearly and at moderate pace</li>
+                <li>• Keep video length between 2-10 minutes</li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-medium text-gray-900 mb-2">Content Guidelines</h4>
+              <ul className="text-sm text-gray-600 space-y-1">
+                <li>• Stay focused on the assignment topic</li>
+                <li>• Include key points and examples</li>
+                <li>• Demonstrate understanding clearly</li>
+                <li>• End with a brief summary</li>
+              </ul>
+            </div>
           </div>
-        </div>
-      </div>
+        </Card.Content>
+      </Card>
     </div>
   );
 };
 
 export default VideoSubmission;
+
+
 

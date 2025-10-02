@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../contexts/AuthContext';
-import api from '../config/api';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
+import api from '../../config/api';
 import { 
   Users, 
   BookOpen, 
@@ -20,6 +21,7 @@ import toast from 'react-hot-toast';
 
 const AdminDashboard = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [stats, setStats] = useState({
     totalStudents: 0,
     totalQuizzes: 0,
@@ -244,7 +246,7 @@ const AdminDashboard = () => {
                         <Send className="h-4 w-4" />
                       </button>
                       <button
-                        onClick={() => window.location.href = `/admin/students/${student.id}`}
+                        onClick={() => navigate(`/admin/students/${student.id}`)}
                         className="p-2 text-gray-400 hover:text-primary-600 transition-colors"
                         title="View details"
                       >
@@ -272,7 +274,7 @@ const AdminDashboard = () => {
                 <BookOpen className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                 <p className="text-gray-500">No quizzes created yet</p>
                 <button
-                  onClick={() => window.location.href = '/admin/quizzes/create'}
+                  onClick={() => navigate('/admin/quizzes/create')}
                   className="mt-4 bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors"
                 >
                   Create First Quiz
@@ -293,14 +295,14 @@ const AdminDashboard = () => {
                       </div>
                       <div className="flex items-center space-x-2">
                         <button
-                          onClick={() => window.location.href = `/admin/quizzes/${quiz.id}`}
+                          onClick={() => navigate(`/admin/quizzes/${quiz.id}`)}
                           className="p-2 text-gray-400 hover:text-primary-600 transition-colors"
                           title="View quiz"
                         >
                           <Eye className="h-4 w-4" />
                         </button>
                         <button
-                          onClick={() => window.location.href = `/admin/quizzes/${quiz.id}/edit`}
+                          onClick={() => navigate(`/admin/quizzes/${quiz.id}/edit`)}
                           className="p-2 text-gray-400 hover:text-primary-600 transition-colors"
                           title="Edit quiz"
                         >
@@ -360,7 +362,7 @@ const AdminDashboard = () => {
                         {video.status}
                       </span>
                       <button
-                        onClick={() => window.location.href = `/admin/videos/${video.id}`}
+                        onClick={() => navigate(`/admin/videos/${video.id}`)}
                         className="p-2 text-gray-400 hover:text-primary-600 transition-colors"
                         title="View analysis"
                       >
@@ -379,4 +381,6 @@ const AdminDashboard = () => {
 };
 
 export default AdminDashboard;
+
+
 

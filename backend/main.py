@@ -5,7 +5,7 @@ import uvicorn
 from dotenv import load_dotenv
 import os
 
-from app.routers import auth, students, quizzes, videos, notifications
+from app.routers import auth, students, quizzes, videos, notifications, admin, student
 from app.core.config import settings
 from app.core.firebase import initialize_firebase
 
@@ -37,6 +37,10 @@ app.include_router(students.router, prefix="/api/students", tags=["students"])
 app.include_router(quizzes.router, prefix="/api/quizzes", tags=["quizzes"])
 app.include_router(videos.router, prefix="/api/videos", tags=["videos"])
 app.include_router(notifications.router, prefix="/api/notifications", tags=["notifications"])
+
+# Add admin and student specific routes
+app.include_router(admin.router, prefix="/api/admin", tags=["admin"])
+app.include_router(student.router, prefix="/api/student", tags=["student"])
 
 @app.get("/")
 async def root():

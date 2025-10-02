@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { useAuth } from '../contexts/AuthContext';
-import api from '../config/api';
+import { useAuth } from '../../contexts/AuthContext';
+import api from '../../config/api';
 import { 
   BookOpen, 
   Plus, 

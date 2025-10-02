@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../contexts/AuthContext';
-import api from '../config/api';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
+import api from '../../config/api';
 import { 
   BookOpen, 
   Play, 
@@ -17,6 +18,7 @@ import toast from 'react-hot-toast';
 
 const StudentDashboard = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [stats, setStats] = useState({
     totalQuizzes: 0,
     completedQuizzes: 0,
@@ -176,7 +178,7 @@ const StudentDashboard = () => {
                           </div>
                         ) : (
                           <button
-                            onClick={() => window.location.href = `/quiz/${quiz.id}`}
+                            onClick={() => navigate(`/quiz/${quiz.id}`)}
                             className="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors flex items-center"
                           >
                             <Play className="h-4 w-4 mr-2" />
@@ -206,7 +208,7 @@ const StudentDashboard = () => {
                 <Video className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                 <p className="text-gray-500">No video submissions yet</p>
                 <button
-                  onClick={() => window.location.href = '/videos/submit'}
+                  onClick={() => navigate('/student/videos/submit')}
                   className="mt-4 bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors"
                 >
                   Submit Video
@@ -251,7 +253,7 @@ const StudentDashboard = () => {
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <button
-            onClick={() => window.location.href = '/quizzes'}
+            onClick={() => navigate('/student/quizzes')}
             className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
           >
             <BookOpen className="h-8 w-8 text-primary-600 mr-3" />
@@ -262,7 +264,7 @@ const StudentDashboard = () => {
           </button>
           
           <button
-            onClick={() => window.location.href = '/videos/submit'}
+            onClick={() => navigate('/student/videos/submit')}
             className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
           >
             <Video className="h-8 w-8 text-primary-600 mr-3" />
@@ -273,7 +275,7 @@ const StudentDashboard = () => {
           </button>
           
           <button
-            onClick={() => window.location.href = '/results'}
+            onClick={() => navigate('/student/quizzes')}
             className="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
           >
             <Award className="h-8 w-8 text-primary-600 mr-3" />
@@ -289,4 +291,6 @@ const StudentDashboard = () => {
 };
 
 export default StudentDashboard;
+
+
 

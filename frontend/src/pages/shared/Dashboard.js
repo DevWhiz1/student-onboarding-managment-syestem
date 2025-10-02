@@ -9,8 +9,8 @@ import {
   CheckCircle,
   AlertCircle
 } from 'lucide-react';
-import { useAuth } from '../contexts/AuthContext';
-import api from '../config/api';
+import { useAuth } from '../../contexts/AuthContext';
+import api from '../../config/api';
 
 const Dashboard = () => {
   const { user, isAdmin } = useAuth();

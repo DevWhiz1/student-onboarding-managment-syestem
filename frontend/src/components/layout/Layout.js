@@ -11,7 +11,7 @@ import {
   Menu,
   X
 } from 'lucide-react';
-import { useAuth } from '../contexts/AuthContext';
+import { useAuth } from '../../contexts/AuthContext';
 
 const Layout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -22,13 +22,13 @@ const Layout = () => {
   const navigation = [
     { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
     ...(isAdmin() ? [
-      { name: 'Students', href: '/students', icon: Users },
-      { name: 'Quizzes', href: '/quizzes', icon: BookOpen },
-      { name: 'Videos', href: '/videos', icon: Video },
+      { name: 'Students', href: '/admin/students', icon: Users },
+      { name: 'Quiz Management', href: '/admin/quizzes', icon: BookOpen },
+      { name: 'Video Reviews', href: '/admin/videos', icon: Video },
       { name: 'Notifications', href: '/notifications', icon: Bell },
     ] : [
-      { name: 'My Quizzes', href: '/quizzes', icon: BookOpen },
-      { name: 'My Videos', href: '/videos', icon: Video },
+      { name: 'My Quizzes', href: '/student/quizzes', icon: BookOpen },
+      { name: 'My Videos', href: '/student/videos', icon: Video },
     ]),
     { name: 'Profile', href: '/profile', icon: User },
   ];
@@ -57,10 +57,10 @@ const Layout = () => {
             {navigation.map((item) => {
               const isActive = location.pathname === item.href;
               return (
-                <a
+                <button
                   key={item.name}
-                  href={item.href}
-                  className={`group flex items-center px-2 py-2 text-sm font-medium rounded-md ${
+                  onClick={() => navigate(item.href)}
+                  className={`group flex items-center px-2 py-2 text-sm font-medium rounded-md w-full text-left ${
                     isActive
                       ? 'bg-primary-100 text-primary-900'
                       : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
@@ -68,7 +68,7 @@ const Layout = () => {
                 >
                   <item.icon className="mr-3 h-5 w-5" />
                   {item.name}
-                </a>
+                </button>
               );
             })}
           </nav>
@@ -107,10 +107,10 @@ const Layout = () => {
             {navigation.map((item) => {
               const isActive = location.pathname === item.href;
               return (
-                <a
+                <button
                   key={item.name}
-                  href={item.href}
-                  className={`group flex items-center px-2 py-2 text-sm font-medium rounded-md ${
+                  onClick={() => navigate(item.href)}
+                  className={`group flex items-center px-2 py-2 text-sm font-medium rounded-md w-full text-left ${
                     isActive
                       ? 'bg-primary-100 text-primary-900'
                       : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
@@ -118,7 +118,7 @@ const Layout = () => {
                 >
                   <item.icon className="mr-3 h-5 w-5" />
                   {item.name}
-                </a>
+                </button>
               );
             })}
           </nav>
